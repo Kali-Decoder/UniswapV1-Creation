@@ -12,22 +12,19 @@ contract Exchange is ERC20 {
         erc20 = _erc20;
     }
 
-    /**
-        @notice Function to deposit ERC20 tokens and mint LP tokens
-        @dev The ERC20 tokens are transferred from the caller to the contract
-        @return 
-     */
+    /// @notice Function to deposit ERC20 tokens and mint LP tokens
+    /// @dev The ERC20 tokens are transferred from the caller to the contract
+    /// @return balance The amount of LP tokens minted to the user
 
     function getReserve() public view returns (uint balance) {
         balance = ERC20(erc20).balanceOf(address(this));
     }
 
-    /**
-        @notice Function to deposit ERC20 tokens and mint LP tokens
-        @dev The ERC20 tokens are transferred from the caller to the contract
-        @param amountOfToken The amount of ERC20 tokens to deposit
-        @return The amount of LP tokens minted to the user
-     */
+    ///    @notice Function to deposit ERC20 tokens and mint LP tokens
+    ///    @dev The ERC20 tokens are transferred from the caller to the contract
+    ///    @param amountOfToken The amount of ERC20 tokens to deposit
+    ///    @return lpTokensToMint The amount of LP tokens minted to the user
+
     function addLiquidity(
         uint amountOfToken
     ) public payable returns (uint256 lpTokensToMint) {
@@ -59,13 +56,10 @@ contract Exchange is ERC20 {
         return lpTokensToMint;
     }
 
-    /**
-    @notice Function to withdraw ERC20 tokens and burn LP tokens
-    @param amountOfLPTokens The amount of LP tokens to burn
-    @dev The ERC20 tokens are transferred from the contract to the caller
-    @return The amount of ETH and tokens returned to the user
-
-     */
+    ///@notice Function to withdraw ERC20 tokens and burn LP tokens
+    ///@param amountOfLPTokens The amount of LP tokens to burn
+    ///@dev The ERC20 tokens are transferred from the contract to the caller
+    ///@return The amount of ETH and tokens returned to the user
 
     function removeLiquidity(
         uint amountOfLPTokens
@@ -91,20 +85,18 @@ contract Exchange is ERC20 {
         return (ethToReturn, tokenToReturn);
     }
 
-    /**
-    @notice Function to swap ERC20 tokens for ETH
-    @param inputAmount 
-    @param inoutReserve
-    @param outputReserve
-    @dev The ERC20 tokens are transferred from the caller to the contract
-    @return The amount of value returned to the user
-    */
+    /// @notice Function to swap ERC20 tokens for ETH
+    ///@param inputAmount as a value
+    ///@param inputReserve as a value
+    ///@param outputReserve as a value
+    ///@dev The ERC20 tokens are transferred from the caller to the contract
+    ///@return value The amount of value returned to the user
 
     function _getOutputAmountFromSwap(
         uint256 inputAmount,
         uint256 inputReserve,
         uint256 outputReserve
-    ) private pure returns (uint256) {
+    ) private pure returns (uint256 value) {
         require(
             inputReserve > 0 && outputReserve > 0,
             "Reserves must be greater than 0"
@@ -115,15 +107,12 @@ contract Exchange is ERC20 {
         uint256 numerator = inputAmountWithFee * outputReserve;
         uint256 denominator = (inputReserve * 100) + inputAmountWithFee;
 
-        return numerator / denominator;
+        value = numerator / denominator;
     }
 
-    /**
-    @notice Function to swap ERC20 tokens for ETH
-    @dev The ERC20 tokens are transferred from the caller to the contract
-    @param minTokensToReceive The minimum amount of tokens to receive from the swap
-    @return The amount of tokens returned to the user
-     */
+    /// @notice Function to swap ERC20 tokens for ETH
+    ///@dev The ERC20 tokens are transferred from the caller to the contract
+    ///@param minTokensToReceive The minimum amount of tokens to receive from the swap
 
     function ethToTokenSwap(uint256 minTokensToReceive) public payable {
         uint256 tokenReserveBalance = getReserve();
@@ -141,13 +130,10 @@ contract Exchange is ERC20 {
         ERC20(erc20).transfer(msg.sender, tokensToReceive);
     }
 
-    /**
-    @notice Function to swap ETH for ERC20 tokens
-    @dev The ERC20 tokens are transferred from the contract to the caller
-    @param tokensToSwap The amount of tokens to swap
-    @param minEthToReceive The minimum amount of ETH to receive from the swap
-    @return The amount of ETH returned to the user
-    */
+    /// @notice Function to swap ETH for ERC20 tokens
+    /// @dev The ERC20 tokens are transferred from the contract to the caller
+    /// @param tokensToSwap The amount of tokens to swap
+    /// @param minEthToReceive The minimum amount of ETH to receive from the swap
 
     function tokenToEthSwap(
         uint256 tokensToSwap,
